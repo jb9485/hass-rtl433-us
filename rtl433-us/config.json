@@ -1,11 +1,21 @@
 {
   "name": "RTL_433 US",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "slug": "rtl433_us",
   "description": "Integrates rtl_433 with Home Assistant using an RTL-SDR dongle.",
   "arch": ["amd64", "armv7", "armhf", "aarch64"],
   "startup": "services",
   "boot": "auto",
-  "options": {},
-  "schema": {}
+  "options": {
+    "mqtt_host": "homeassistant",
+    "mqtt_port": 1883,
+    "mqtt_user": "",
+    "mqtt_pass": ""
+  },
+  "schema": {
+    "mqtt_host": "str?",
+    "mqtt_port": "int?",
+    "mqtt_user": "str?",
+    "mqtt_pass": "str?"
+  }
 }
