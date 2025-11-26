@@ -5,6 +5,7 @@ ENV LANG C.UTF-8
 
 RUN apk add --no-cache \
     rtl-sdr \
+    rtl-sdr-dev \
     libusb \
     libusb-dev \
     mosquitto-clients \
@@ -16,6 +17,7 @@ RUN apk add --no-cache \
     g++ \
     build-base \
     linux-headers
+
 
 # Build latest rtl_433
 RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433
