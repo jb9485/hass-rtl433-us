@@ -6,13 +6,15 @@ ENV LANG C.UTF-8
 RUN apk add --no-cache \
     rtl-sdr \
     libusb \
-    mqtt-client \
+    libusb-dev \
+    mosquitto-clients \
     jq \
     git \
     cmake \
     make \
     gcc \
     g++ \
+    build-base \
     linux-headers
 
 # Build latest rtl_433
@@ -21,7 +23,7 @@ RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433 && \
     git checkout master && \
     mkdir build && cd build && \
     cmake .. -DENABLE_RTLSDR=ON && \
-    make -j$(nproc && \
+    make -j$(nproc) && \
     make install && \
     rm -rf /tmp/rtl_433
 
