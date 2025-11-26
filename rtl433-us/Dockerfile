@@ -18,14 +18,15 @@ RUN apk add --no-cache \
     linux-headers
 
 # Build latest rtl_433
-RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433 && \
-    cd /tmp/rtl_433 && \
-    git checkout master && \
-    mkdir build && cd build && \
-    cmake .. -DENABLE_RTLSDR=ON && \
-    make -j$(nproc) && \
-    make install && \
-    rm -rf /tmp/rtl_433
+RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433
+WORKDIR /tmp/rtl_433
+RUN mkdir build
+WORKDIR /tmp/rtl_433/build
+RUN cmake .. -DENABLE_RTLSDR=ON
+RUN make -j$(nproc)
+RUN make install
+WORKDIR /
+RUN rm -rf /tmp/rtl_433
 
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
