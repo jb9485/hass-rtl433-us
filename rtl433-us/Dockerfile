@@ -5,18 +5,14 @@ ENV LANG C.UTF-8
 
 RUN apk add --no-cache \
     rtl-sdr \
-    rtl-sdr-dev \
     libusb \
     libusb-dev \
     mosquitto-clients \
     jq \
     git \
     cmake \
-    make \
-    gcc \
-    g++ \
-    build-base \
-    linux-headers
+    build-base
+
 
 
 # Build latest rtl_433
