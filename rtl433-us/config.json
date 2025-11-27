@@ -6,6 +6,7 @@
   "arch": ["amd64", "armv7", "armhf", "aarch64"],
   "startup": "services",
   "boot": "auto",
+  "devices": ["/dev/bus/usb/001/004"],
   "options": {
     "mqtt_host": "homeassistant",
     "mqtt_port": 1883,
@@ -18,4 +19,5 @@
     "mqtt_user": "str?",
     "mqtt_pass": "str?"
   }
+
 }
