@@ -1,7 +1,9 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:stable
 FROM ${BUILD_FROM}
 
-RUN apk add --no-cache rtl-sdr mosquitto-clients jq git cmake build-base libusb-dev
+RUN apk add --no-cache \
+    rtl-sdr rtl-sdr-dev \
+    mosquitto-clients jq git cmake build-base libusb-dev
 
 RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433 && \
     cd /tmp/rtl_433 && mkdir build && cd build && \
