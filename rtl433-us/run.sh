@@ -13,4 +13,4 @@ echo "RTL_433 US add-on started"
 echo "MQTT → $MQTT_URL"
 echo "Waiting for RTL-SDR dongle..."
 
-exec rtl_433 -f 915000000 -s 1000000 -g 45 -F "mqtt:$MQTT_URL,retain=1" -M newmodel
+exec rtl_433 -F "mqtt://$MQTT_HOST:$MQTT_PORT" -M newmodel
