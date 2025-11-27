@@ -27,5 +27,5 @@ RUN make install
 WORKDIR /
 RUN rm -rf /tmp/rtl_433
 
-COPY run.sh /run.sh
 RUN chmod a+x /run.sh
+COPY run.sh /run.sh
