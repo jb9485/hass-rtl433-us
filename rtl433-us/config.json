@@ -19,5 +19,4 @@
     "mqtt_user": "str?",
     "mqtt_pass": "str?"
   }
-
 }

@@ -15,7 +15,6 @@ RUN apk add --no-cache \
     build-base \
     openssl-dev
 
-
 # Build latest rtl_433
 RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433
 WORKDIR /tmp/rtl_433
