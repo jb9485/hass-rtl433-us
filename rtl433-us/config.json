@@ -1,6 +1,6 @@
 {
   "name": "RTL_433 US (915 MHz + Multi)",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "slug": "rtl433-us",
   "description": "Modern rtl_433 add-on – US 915 MHz focus, frequency hopping, multi-dongle, MQTT auto-discovery",
   "url": "https://github.com/jb9485/hass-rtl433-us",
@@ -11,9 +11,6 @@
   "host_network": true,
   "devices": [
     "/dev/bus/usb:/dev/bus/usb:rwm"
-  ],
-  "map": [
-    "ssl:rw"
   ],
   "options": {
     "devices": [
