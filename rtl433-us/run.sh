@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -e
+
 CONFIG_PATH=/data/options.json
 
-MQTT_HOST=$(bashio::config 'mqtt_host')
-MQTT_PORT=$(bashio::config 'mqtt_port')
-MQTT_USER=$(bashio::config 'mqtt_user')
-MQTT_PASS=$(bashio::config 'mqtt_pass')
+MQTT_HOST=$(jq -r '.mqtt_host' $CONFIG_PATH)
+MQTT_PORT=$(jq -r '.mqtt_port' $CONFIG_PATH)
+MQTT_USER=$(jq -r '.mqtt_user' $CONFIG_PATH)
+MQTT_PASS=$(jq -r '.mqtt_pass' $CONFIG_PATH)
 
 echo "[$(date '+%H:%M:%S')] Starting RTL_433 with MQTT + log output"
 echo "Connecting to MQTT at $MQTT_HOST:$MQTT_PORT with user $MQTT_USER"
