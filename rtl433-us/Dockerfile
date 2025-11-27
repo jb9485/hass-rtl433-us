@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:stable
+ARG BUILD_FROM=ghcr.io/hassio-addons/base/aarch64:stable
 FROM ${BUILD_FROM}
 
 RUN apk add --no-cache \
