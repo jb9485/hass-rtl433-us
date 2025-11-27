@@ -1,14 +1,25 @@
-#!/usr/bin/with-contenv sh
+#!/usr/bin/env bash
+set -e
 
-MQTT_HOST=${MQTT_HOST:-homeassistant}
-MQTT_PORT=${MQTT_PORT:-1883}
-MQTT_USER=${MQTT_USER:-}
-MQTT_PASS=${MQTT_PASS:-}
+# Build rtl_433 command line from config
+RTL_ARGS=""
 
-MQTT_URL="mqtt://${MQTT_HOST}:${MQTT_PORT}"
-if [ -n "$MQTT_USER" ] && [ -n "$MQTT_PASS" ]; then
-  MQTT_URL="mqtt://${MQTT_USER}:${MQTT_PASS}@${MQTT_HOST}:${MQTT_PORT}"
-fi
+for i in $(seq 0 $((${#devices[@]}-1))); do
+  freq="${devices[$i][frequency]}"
+  rate="${devices[$i][sample_rate]:-1000000}"
+  gain="${devices[$i][gain]:-40}"
+  ppm="${devices[$i][ppm]:-0}"
 
-# Run rtl_433 and send output to stdout (captured by s6 logging)
-exec rtl_433 -F "$MQTT_URL" -M newmodel
+  RTL_ARGS="$RTL_ARGS -f $freq -s $rate -g $gain -p $ppm"
+done
+
+[ -n "$hop_interval" ] && RTL_ARGS="$RTL_ARGS -t ${hop_interval}"
+
+MQTT_URL="mqtt://${mqtt_host}:${mqtt_port}"
+[ -n "${mqtt_user}" ] && MQTT_URL="mqtt://${mqtt_user}:${mqtt_pass}@${mqtt_host}:${mqtt_port}"
+
+exec rtl_433 \
+  $RTL_ARGS \
+  -F "mqtt:$MQTT_URL,devices=rtl_433/[{model}]/[{id}],events=rtl_433/[{model}]/[{id}]/event,retain=${mqtt_retain:-0}" \
+  -M newmodel -M time:iso -M protocol \
+  -G

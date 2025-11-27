@@ -1,31 +1,18 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
-FROM $BUILD_FROM
-
-ENV LANG=C.UTF-8
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:stable
+FROM ${BUILD_FROM}
 
 RUN apk add --no-cache \
-    rtl-sdr \
-    librtlsdr-dev \
-    libusb \
-    libusb-dev \
-    mosquitto-clients \
-    jq \
-    git \
-    cmake \
-    build-base \
-    openssl-dev
+    rtl-sdr librtlsdr-dev libusb-dev mosquitto-clients jq git cmake build-base
 
-# Build latest rtl_433
-RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433
-WORKDIR /tmp/rtl_433
-RUN mkdir build
-WORKDIR /tmp/rtl_433/build
-RUN cmake .. -DENABLE_RTLSDR=ON
-RUN make -j$(nproc)
-RUN make install
-WORKDIR /
-RUN rm -rf /tmp/rtl_433
+RUN git clone --depth 1 https://github.com/merbanan/rtl_433.git /tmp/rtl_433 \
+    && mkdir /tmp/rtl_433/build \
+    && cd /tmp/rtl_433/build \
+    && cmake .. -DENABLE_RTLSDR=ON \
+    && make -j$(nproc) \
+    && make install \
+    && rm -rf /tmp/rtl_433
 
-COPY run.sh /run.sh
-RUN chmod a+x /run.sh
+COPY run.sh /usr/bin/rtl433-run
+RUN chmod a+x /usr/bin/rtl433-run
 
+CMD [ "/usr/bin/rtl433-run" ]
