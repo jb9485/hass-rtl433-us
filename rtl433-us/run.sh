@@ -1,17 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-MQTT_HOST=${MQTT_HOST:-core-mosquitto}
-MQTT_PORT=${MQTT_PORT:-1883}
-MQTT_USER=${MQTT_USER:-}
-MQTT_PASS=${MQTT_PASS:-}
-
-MQTT_URL="mqtt://$$ {MQTT_HOST}: $${MQTT_PORT}"
-[ -n "$$ MQTT_USER" ] && MQTT_URL="mqtt:// $${MQTT_USER}:$$ {MQTT_PASS}@ $${MQTT_HOST}:${MQTT_PORT}"
-
 echo "RTL_433 US add-on started"
-echo "MQTT → $MQTT_URL"
-echo "Waiting for RTL-SDR dongle..."
-
-echo "=== RTL_433 STARTING ON DEFAULT 433.92 MHz ==="
-exec rtl_433 -F "mqtt://$MQTT_HOST:$MQTT_PORT" -M newmodel -vvv
+echo "Trying device 0..."
+exec rtl_433 -d 0 -F "mqtt://core-mosquitto:1883" -M newmodel || \
+     (echo "Device 0 failed, trying device 1..." && \
+      exec rtl_433 -d 1 -F "mqtt://core-mosquitto:1883" -M newmodel)
