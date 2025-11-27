@@ -7,8 +7,11 @@
   "startup": "services",
   "boot": "auto",
   "init": false,
-  "devices": [ "/dev/bus/usb:/dev/bus/usb:rw" ],
   "full_access": true,
+  "devices": [
+    "/dev/bus/usb:/dev/bus/usb:rw",
+    "/dev/bus/usb/001/003:/dev/bus/usb/001/003"
+  ],
   "options": {
     "mqtt_host": "core-mosquitto",
     "mqtt_port": 1883,
