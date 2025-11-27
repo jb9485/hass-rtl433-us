@@ -1,31 +1,22 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:stable
 FROM ${BUILD_FROM}
 
-# Keep everything else you have (apk add rtl-sdr, git clone rtl_433, etc.)
-ENV LANG=C.UTF-8
-
+# Install dependencies and build rtl_433
 RUN apk add --no-cache \
-    rtl-sdr \
-    librtlsdr-dev \
-    libusb \
-    libusb-dev \
-    mosquitto-clients \
-    jq \
-    git \
-    cmake \
-    build-base \
-    openssl-dev
+    rtl-sdr librtlsdr-dev libusb libusb-dev \
+    mosquitto-clients jq git cmake build-base openssl-dev
 
-# Build latest rtl_433
-RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433
-WORKDIR /tmp/rtl_433
-RUN mkdir build
-WORKDIR /tmp/rtl_433/build
-RUN cmake .. -DENABLE_RTLSDR=ON
-RUN make -j$(nproc)
-RUN make install
-WORKDIR /
-RUN rm -rf /tmp/rtl_433
+RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433 && \
+    mkdir -p /tmp/rtl_433/build && \
+    cd /tmp/rtl_433/build && \
+    cmake .. -DENABLE_RTLSDR=ON && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /tmp/rtl_433
 
-RUN chmod a+x /run.sh
+# Copy and make executable in ONE layer
 COPY run.sh /run.sh
+RUN chmod a+x /run.sh
+
+# Tell the container to run it
+CMD [ "/run.sh" ]
