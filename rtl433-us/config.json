@@ -18,6 +18,5 @@
     "mqtt_port": "int?",
     "mqtt_user": "str?",
     "mqtt_pass": "str?"
-  },
-  "image": "ghcr.io/jb9485/rtl433-us-{arch}"
+  }
 }
