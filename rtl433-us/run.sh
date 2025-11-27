@@ -13,4 +13,5 @@ echo "RTL_433 US add-on started"
 echo "MQTT → $MQTT_URL"
 echo "Waiting for RTL-SDR dongle..."
 
-exec rtl_433 -F "mqtt://$MQTT_HOST:$MQTT_PORT" -M newmodel
+echo "=== RTL_433 STARTING ON DEFAULT 433.92 MHz ==="
+exec rtl_433 -F "mqtt://$MQTT_HOST:$MQTT_PORT" -M newmodel -vvv
