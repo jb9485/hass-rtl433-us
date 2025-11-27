@@ -7,6 +7,7 @@
   "startup": "services",
   "boot": "auto",
   "init": false,
+  "full_access": true,
   "devices": [
     "/dev/bus/usb:/dev/bus/usb:rwm"
   ],
