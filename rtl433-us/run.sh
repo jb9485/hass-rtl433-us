@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/with-contenv sh
 
 MQTT_HOST=${MQTT_HOST:-homeassistant}
 MQTT_PORT=${MQTT_PORT:-1883}
