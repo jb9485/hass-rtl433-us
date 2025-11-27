@@ -1,63 +1,23 @@
 {
-  "name": "RTL_433 US (915 MHz + Multi)",
-  "version": "0.3.9",
+  "name": "RTL_433 US",
+  "version": "0.3.7",
   "slug": "rtl433-us",
-  "description": "Modern rtl_433 add-on – US 915 MHz focus, frequency hopping, multi-dongle, MQTT auto-discovery",
-  "url": "https://github.com/jb9485/hass-rtl433-us",
-  "arch": ["aarch64", "amd64", "armv7", "armhf"],
-  "startup": "application",
+  "description": "Integrates rtl_433 with Home Assistant using an RTL-SDR dongle.",
+  "arch": ["amd64", "armv7", "armhf", "aarch64"],
+  "startup": "services",
   "boot": "auto",
-  "init": false,
-  "host_network": true,
-  "devices": [
-    "/dev/bus/usb:/dev/bus/usb:rwm"
-  ],
+  "devices": ["/dev/bus/usb:/dev/bus/usb:rwm"],
   "options": {
-    "devices": [
-      {
-        "frequency": 915000000,
-        "sample_rate": 1000000,
-        "gain": 45,
-        "ppm": 0,
-        "label": "915 MHz US"
-      },
-      {
-        "frequency": 433920000,
-        "sample_rate": 250000,
-        "gain": 40,
-        "ppm": 0,
-        "label": "433 MHz fallback"
-      }
-    ],
-    "mqtt": {
-      "host": "core-mosquitto",
-      "port": 1883,
-      "user": "",
-      "pass": "",
-      "topic": "rtl_433",
-      "retain": false
-    },
-    "hop_interval": 0.8
+    "mqtt_host": "core-mosquitto",
+    "mqtt_port": 1883,
+    "mqtt_user": "",
+    "mqtt_pass": ""
   },
   "schema": {
-    "devices": [
-      {
-        "frequency": "int(100000000,1000000000)",
-        "sample_rate": "list(250000|1000000|2000000)",
-        "gain": "int(0,60)",
-        "ppm": "int(-200,200)",
-        "label": "str"
-      }
-    ],
-    "mqtt": {
-      "host": "str",
-      "port": "port?",
-      "user": "str?",
-      "pass": "password?",
-      "topic": "str?",
-      "retain": "bool?"
-    },
-    "hop_interval": "float(0.1,10)?"
+    "mqtt_host": "str?",
+    "mqtt_port": "int?",
+    "mqtt_user": "str?",
+    "mqtt_pass": "str?"
   },
   "image": "ghcr.io/jb9485/rtl433-us-{arch}"
 }
