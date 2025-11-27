@@ -1,7 +1,7 @@
 {
   "name": "RTL_433 US (915 MHz + Multi)",
   "version": "0.3.7",
-  "slug": "rtl433_us",
+  "slug": "rtl433-us",
   "description": "Modern rtl_433 add-on – US 915 MHz focus, frequency hopping, multi-dongle, MQTT auto-discovery",
   "url": "https://github.com/jb9485/hass-rtl433-us",
   "arch": ["aarch64", "amd64", "armv7", "armhf"],
