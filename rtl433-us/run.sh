@@ -5,9 +5,9 @@ log() { echo "[$(date '+%H:%M:%S')] $*"; }
 
 log "RTL_433 US add-on started – Blog V4 dongle found"
 
-# 2.0 MS/s sample rate + auto gain + verbose
+# Default decoders (no -G needed) + log output to console
 exec rtl_433 \
-  -s 2000000 \
-  -G \
+  -s 250000 \
   -F "mqtt://core-mosquitto:1883,retain=0" \
+  -F log \
   -M newmodel
