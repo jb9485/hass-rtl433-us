@@ -15,15 +15,17 @@ while true; do
   timeout 0.5 rtl_433 \
     -d 0 \
     -f 433920000 \
+    -s 250k \
     -F json \
-    -F "mqtt://$MQTT_HOST:$MQTT_PORT,user=$MQTT_USER,pass=$MQTT_PASS,retain=0,devices=rtl_433/433mhz[/model][/id]" \
-    -M newmodel
+    -F log \
+    -F "mqtt://$MQTT_HOST:$MQTT_PORT,user=$MQTT_USER,pass=$MQTT_PASS,retain=0,devices=rtl_433/433mhz[/model][/id]"
 
   echo "[$(date '+%H:%M:%S')] Listening on 915 MHz"
   timeout 0.5 rtl_433 \
     -d 0 \
     -f 915000000 \
+    -s 250k \
     -F json \
-    -F "mqtt://$MQTT_HOST:$MQTT_PORT,user=$MQTT_USER,pass=$MQTT_PASS,retain=0,devices=rtl_433/915mhz[/model][/id]" \
-    -M newmodel
+    -F log \
+    -F "mqtt://$MQTT_HOST:$MQTT_PORT,user=$MQTT_USER,pass=$MQTT_PASS,retain=0,devices=rtl_433/915mhz[/model][/id]"
 done
