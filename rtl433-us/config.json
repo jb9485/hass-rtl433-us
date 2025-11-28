@@ -1,8 +1,8 @@
 {
   "name": "RTL_433 US",
-  "version": "0.4.05",
+  "version": "0.4.06",
   "slug": "rtl433-us",
-  "description": "Integrates rtl_433 with Home Assistant using an RTL-SDR dongle.",
+  "description": "Integrates rtl_433 with Home Assistant using an RTL-SDR dongle. Allows the user to select either 433MHz or 915MHz frequency bands. Writes to MQTT broker.",
   "arch": ["aarch64", "armv7", "armhf", "amd64"],
   "startup": "services",
   "boot": "auto",
@@ -16,12 +16,14 @@
     "mqtt_host": "core-mosquitto",
     "mqtt_port": 1883,
     "mqtt_user": "",
-    "mqtt_pass": ""
+    "mqtt_pass": "",
+    "frequency": 433
   },
   "schema": {
     "mqtt_host": "str?",
     "mqtt_port": "int?",
     "mqtt_user": "str?",
-    "mqtt_pass": "str?"
+    "mqtt_pass": "str?",
+    "frequency": "int(433|915)?"
   }
 }
