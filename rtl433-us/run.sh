@@ -9,16 +9,20 @@ MQTT_USER=$(jq -r '.mqtt_user' $CONFIG_PATH)
 MQTT_PASS=$(jq -r '.mqtt_pass' $CONFIG_PATH)
 FREQ=$(jq -r '.frequency' $CONFIG_PATH)
 
-if [ "$FREQ" = "433" ]; then
-  TUNE=433920000
-  RATE=250k
-elif [ "$FREQ" = "915" ]; then
-  TUNE=915000000
-  RATE=1M
-else
-  echo "Invalid frequency option: $FREQ"
-  exit 1
-fi
+case "$FREQ" in
+  433)
+    TUNE=433920000
+    RATE=250k
+    ;;
+  915)
+    TUNE=915000000
+    RATE=1M
+    ;;
+  *)
+    echo "Invalid frequency option: $FREQ (must be 433 or 915)"
+    exit 1
+    ;;
+esac
 
 echo "[$(date '+%H:%M:%S')] Starting RTL_433 tuned to $TUNE Hz with sample rate $RATE"
 
