@@ -2,7 +2,7 @@
   "name": "RTL_433 US",
   "version": "0.4.07",
   "slug": "rtl433-us",
-  "description": "Integrates rtl_433 with Home Assistant using an RTL-SDR dongle. Allows the user to select either 433MHz or 915MHz frequency bands. Writes to MQTT broker.",
+  "description": "Integrates rtl_433 with Home Assistant using an RTL-SDR dongle.",
   "arch": ["aarch64", "armv7", "armhf", "amd64"],
   "startup": "services",
   "boot": "auto",
