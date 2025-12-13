@@ -1,45 +1,47 @@
-#!/usr/bin/with-contenv bash
+#!/usr/bin/env bash
 
-# Load MQTT config (bashio if available, else jq fallback)
-if command -v bashio >/dev/null 2>&1; then
-    MQTT_HOST=$(bashio::config 'mqtt_host')
-    MQTT_PORT=$(bashio::config 'mqtt_port' '1883')
-    MQTT_USER=$(bashio::config 'mqtt_user' '')
-    MQTT_PASS=$(bashio::config 'mqtt_password' '')
-else
-    MQTT_HOST=$(jq -r '.mqtt_host // "localhost"' /data/options.json)
-    MQTT_PORT=$(jq -r '.mqtt_port // 1883' /data/options.json)
-    MQTT_USER=$(jq -r '.mqtt_user // empty' /data/options.json)
-    MQTT_PASS=$(jq -r '.mqtt_password // empty' /data/options.json)
-fi
+set -e
+
+CONFIG_PATH=/data/options.json
+
+MQTT_HOST=$(jq -r '.mqtt_host // "core-mosquitto"' $CONFIG_PATH)
+MQTT_PORT=$(jq -r '.mqtt_port // 1883' $CONFIG_PATH)
+MQTT_USER=$(jq -r '.mqtt_user // empty' $CONFIG_PATH)
+MQTT_PASS=$(jq -r '.mqtt_password // empty' $CONFIG_PATH)
 
 MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
-if [[ -n "$MQTT_USER" ]]; then
-    MQTT_URL="${MQTT_URL},user=$MQTT_USER"
-    if [[ -n "$MQTT_PASS" ]]; then
-        MQTT_URL="${MQTT_URL},pass=$MQTT_PASS"
+if [ -n "$MQTT_USER" ]; then
+    MQTT_URL="$MQTT_URL,user=$MQTT_USER"
+    if [ -n "$MQTT_PASS" ]; then
+        MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
     fi
 fi
 
 COMMON_FLAGS="-q -C si -M utc"
 
-# Launch per dongle
-jq -c '.dongles[]' /data/options.json | while read -r dongle; do
+jq -c '.dongles[]' $CONFIG_PATH | while read -r dongle; do
     DEVICE=$(echo "$dongle" | jq -r '.device // "0"')
-    FREQ_MHZ=$(echo "$dongle" | jq -r '.frequency')
+    FREQ=$(echo "$dongle" | jq -r '.frequency // 433')
 
-    if [[ "$FREQ_MHZ" != "433" && "$FREQ_MHZ" != "915" ]]; then
-        echo "Skipping invalid frequency: $FREQ_MHZ (must be 433 or 915)"
+    if [ "$FREQ" != "433" ] && [ "$FREQ" != "915" ]; then
+        echo "Invalid frequency $FREQ for device $DEVICE - skipping"
         continue
     fi
 
-    FREQ_HZ="${FREQ_MHZ}000000"
-    PREFIX="${FREQ_MHZ}mhz"
+    if [ "$FREQ" = "433" ]; then
+        TUNE=433920000
+        RATE=250k
+    else
+        TUNE=915000000
+        RATE=1M
+    fi
 
-    echo "Starting rtl_433 on device $DEVICE at ${FREQ_MHZ} MHz"
+    PREFIX="${FREQ}mhz"
 
-    rtl_433 -d "$DEVICE" -f "$FREQ_HZ" $COMMON_FLAGS \
-        -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]" &
+    echo "Starting rtl_433 device $DEVICE on $FREQ MHz (tune $TUNE Hz, rate $RATE)"
+
+    rtl_433 -d "$DEVICE" -f "$TUNE" -s "$RATE" $COMMON_FLAGS \
+        -F "$$ MQTT_URL,retain=1,devices=rtl_433/ $${PREFIX}/[model]/[id]" &
 done
 
 wait
