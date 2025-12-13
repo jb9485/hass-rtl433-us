@@ -1,20 +1,18 @@
 #!/usr/bin/with-contenv bash
 
-# Load configuration using bashio if available, otherwise fallback to jq
+# Load MQTT config (bashio if available, else jq fallback)
 if command -v bashio >/dev/null 2>&1; then
-    bashio::log.info "Starting RTL_433 US multi-dongle add-on"
-
     MQTT_HOST=$(bashio::config 'mqtt_host')
     MQTT_PORT=$(bashio::config 'mqtt_port' '1883')
     MQTT_USER=$(bashio::config 'mqtt_user' '')
-    MQTT_PASS=$(bashio::config 'mqtt_password' '') 
+    MQTT_PASS=$(bashio::config 'mqtt_password' '')
+else
     MQTT_HOST=$(jq -r '.mqtt_host // "localhost"' /data/options.json)
     MQTT_PORT=$(jq -r '.mqtt_port // 1883' /data/options.json)
     MQTT_USER=$(jq -r '.mqtt_user // empty' /data/options.json)
     MQTT_PASS=$(jq -r '.mqtt_password // empty' /data/options.json)
 fi
 
-# Build MQTT URL with optional authentication
 MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 if [[ -n "$MQTT_USER" ]]; then
     MQTT_URL="${MQTT_URL},user=$MQTT_USER"
@@ -23,39 +21,25 @@ if [[ -n "$MQTT_USER" ]]; then
     fi
 fi
 
-# Common recommended flags
-COMMON_FLAGS="-q -C si -M utc"  # Quiet, SI units, UTC timestamps
+COMMON_FLAGS="-q -C si -M utc"
 
-# If no dongles configured, fall back to single dongle on 433 MHz (for backward compatibility)
-if ! jq -e '.dongles' /data/options.json >/dev/null; then
-    echo "No dongles configured – running single instance on 433 MHz (device index 0)"
-    rtl_433 -d 0 -f 433000000 $COMMON_FLAGS -F "$MQTT_URL,retain=1,devices=rtl_433/433mhz/[model]/[id]" &
-    wait
-    exit 0
-fi
-
-# Launch one rtl_433 instance per dongle
+# Launch per dongle
 jq -c '.dongles[]' /data/options.json | while read -r dongle; do
-    DEVICE=$(echo "$dongle" | jq -r '.device // "0"')      # Default to index 0 if blank
-    FREQ_MHZ=$(echo "$dongle" | jq -r '.frequency // 433') # Default to 433 if missing
+    DEVICE=$(echo "$dongle" | jq -r '.device // "0"')
+    FREQ_MHZ=$(echo "$dongle" | jq -r '.frequency')
 
-    # Convert MHz to Hz for rtl_433
-    FREQ_HZ="${FREQ_MHZ}000000"
-
-    # Topic prefix based on frequency (matches original single-dongle behavior)
-    if [[ "$FREQ_MHZ" == "915" ]]; then
-        TOPIC_PREFIX="915mhz"
-    else
-        TOPIC_PREFIX="433mhz"
+    if [[ "$FREQ_MHZ" != "433" && "$FREQ_MHZ" != "915" ]]; then
+        echo "Skipping invalid frequency: $FREQ_MHZ (must be 433 or 915)"
+        continue
     fi
 
-    echo "Launching rtl_433 for device '$DEVICE' on ${FREQ_MHZ} MHz (topic prefix: $TOPIC_PREFIX)"
+    FREQ_HZ="${FREQ_MHZ}000000"
+    PREFIX="${FREQ_MHZ}mhz"
 
-    rtl_433 -d "$DEVICE" \
-            -f "$FREQ_HZ" \
-            $COMMON_FLAGS \
-            -F "$MQTT_URL,retain=1,devices=rtl_433/${TOPIC_PREFIX}/[model]/[id]" &
+    echo "Starting rtl_433 on device $DEVICE at ${FREQ_MHZ} MHz"
+
+    rtl_433 -d "$DEVICE" -f "$FREQ_HZ" $COMMON_FLAGS \
+        -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]" &
 done
 
-# Keep container running until all instances exit
 wait
