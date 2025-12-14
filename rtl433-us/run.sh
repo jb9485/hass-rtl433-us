@@ -25,7 +25,7 @@ while IFS= read -r d; do
 
     PREFIX="${FREQ}mhz"
 
-    echo "Attempting to open device at $DEVICE_PATH"
+    echo "Attempting to open $DEVICE_PATH at $FREQ MHz"
 
     rtl_433 -d "$DEVICE_PATH" -f $TUNE -s $RATE -C si -M utc -F log \
         -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
