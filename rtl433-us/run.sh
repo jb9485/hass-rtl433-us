@@ -4,9 +4,6 @@ set -e
 
 CONFIG=/data/options.json
 
-echo "Listing detected RTL-SDR devices:"
-
-
 MQTT_HOST=$(jq -r '.mqtt_host // "core-mosquitto"' $CONFIG)
 MQTT_PORT=$(jq -r '.mqtt_port // 1883' $CONFIG)
 MQTT_USER=$(jq -r '.mqtt_user // empty' $CONFIG)
@@ -17,21 +14,17 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 [ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
 
 while IFS= read -r d; do
-    DEVICE="0" #$(echo "$d" | jq -r '.device // "0"')
-    if [[ -n "$DEVICE" && "$DEVICE" != "0" ]]; then
-        DEVICE=":$DEVICE"
-    fi
-
+    DEVICE_PATH=$(echo "$d" | jq -r '.device_path')
     FREQ=$(echo "$d" | jq -r '.frequency // 433')
 
     case "$FREQ" in
         433) TUNE=433920000; RATE=250k ;;
         915) TUNE=915000000; RATE=1M ;;
-        *) echo "Skip invalid freq $FREQ for device $DEVICE"; continue ;;
+        *) echo "Skip invalid freq $FREQ"; continue ;;
     esac
 
     PREFIX="${FREQ}mhz"
-#
-ls -l /dev/bus/usb/*
-rtl_test -t
+
+    rtl_433 -d "$DEVICE_PATH" -f $TUNE -s $RATE -C si -M utc -F log \
+        -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
 done < <(jq -c '.dongles[]' $CONFIG)
