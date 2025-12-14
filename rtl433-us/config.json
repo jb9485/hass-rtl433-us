@@ -1,6 +1,6 @@
 {
   "name": "RTL_433 US",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "slug": "rtl433-us",
   "description": "Integrates rtl_433 with Home Assistant using RTL-SDR dongles (supports multiple with per-dongle frequencies).",
   "arch": ["aarch64", "armv7", "armhf", "amd64"],
@@ -8,6 +8,7 @@
   "boot": "auto",
   "init": false,
   "full_access": true,
+  "privileged": true,
   "devices": [
     "/dev/bus/usb:/dev/bus/usb:rw"
   ],
