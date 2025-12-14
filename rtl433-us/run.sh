@@ -24,7 +24,7 @@ while IFS= read -r d; do
     esac
 
     PREFIX="${FREQ}mhz"
-
+    ls -l /dev/bus/usb/*/*
     rtl_433 -d "$DEVICE_PATH" -f $TUNE -s $RATE -C si -M utc -F log \
         -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
 done < <(jq -c '.dongles[]' $CONFIG)
