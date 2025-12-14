@@ -28,7 +28,7 @@ while IFS= read -r d; do
     echo "Attempting to open $DEVICE_PATH at $FREQ MHz"
 
     rtl_test -t
-    
+
     rtl_433 -d "$DEVICE_PATH" -f $TUNE -s $RATE -C si -M utc -F log \
         -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
 done < <(jq -c '.dongles[]' $CONFIG)
