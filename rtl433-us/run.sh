@@ -15,7 +15,7 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 
 while IFS= read -r d; do
     DEVICE=$(echo "$d" | jq -r '.device // "0"')
-    if [[ "$DEVICE" =~ ^[0-9]+$ && "$DEVICE" != "0" ]]; then
+    if [[ -n "$DEVICE" && "$DEVICE" != "0" ]]; then
         DEVICE=":$DEVICE"
     fi
 
