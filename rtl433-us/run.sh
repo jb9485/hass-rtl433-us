@@ -32,6 +32,6 @@ while IFS= read -r d; do
 
     PREFIX="${FREQ}mhz"
 #
-echo "Detected RTL-SDR devices in container:"
+ls -l /dev/bus/usb/*
 rtl_test -t
 done < <(jq -c '.dongles[]' $CONFIG)
