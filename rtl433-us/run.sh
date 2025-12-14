@@ -13,11 +13,9 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 [ -n "$MQTT_USER" ] && MQTT_URL="$MQTT_URL,user=$MQTT_USER"
 [ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
 
-found=0
+PIDS=()
 
-jq -c '.dongles[]' $CONFIG | while read -r d; do
-    found=1
-
+while IFS= read -r d; do
     DEVICE=$(echo "$d" | jq -r '.device // "0"')
     FREQ=$(echo "$d" | jq -r '.frequency // 433')
 
@@ -30,10 +28,13 @@ jq -c '.dongles[]' $CONFIG | while read -r d; do
     PREFIX="${FREQ}mhz"
 
     rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -q -C si -M utc \
-        -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
-done
+        -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]" &
+    PIDS+=($!)
+done < <(jq -c '.dongles[]' $CONFIG)
 
-if [ "$found" -eq 0 ]; then
-    echo "No dongles configured"
+if [ ${#PIDS[@]} -eq 0 ]; then
+    echo "No valid dongles configured - sleeping"
     sleep infinity
 fi
+
+wait ${PIDS[@]}
