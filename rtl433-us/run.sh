@@ -27,6 +27,6 @@ jq -c '.dongles[]' $CONFIG | while read -r d; do
 
     rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -q -C si -M utc \
         -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]" &
+  wait
 done
 
-wait
