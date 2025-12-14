@@ -1,17 +1,4 @@
-#!/usr/bin/env bash
-
-set -e
-
-CONFIG=/data/options.json
-
-MQTT_HOST=$(jq -r '.mqtt_host // "core-mosquitto"' $CONFIG)
-MQTT_PORT=$(jq -r '.mqtt_port // 1883' $CONFIG)
-MQTT_USER=$(jq -r '.mqtt_user // empty' $CONFIG)
-MQTT_PASS=$(jq -r '.mqtt_password // empty' $CONFIG)
-
-MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
-[ -n "$MQTT_USER" ] && MQTT_URL="$MQTT_URL,user=$MQTT_USER"
-[ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
+PIDS=()
 
 jq -c '.dongles[]' $CONFIG | while read -r d; do
     DEVICE=$(echo "$d" | jq -r '.device // "0"')
@@ -27,6 +14,9 @@ jq -c '.dongles[]' $CONFIG | while read -r d; do
 
     rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -q -C si -M utc \
         -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]" &
-  wait
+    PIDS+=($!)
 done
 
+for pid in "${PIDS[@]}"; do
+    wait $pid
+done
