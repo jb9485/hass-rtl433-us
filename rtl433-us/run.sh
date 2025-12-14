@@ -36,6 +36,6 @@ while IFS= read -r d; do
     rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -C si -M utc -F log \
     -F "$$ MQTT_URL,retain=1,devices=rtl_433/ $${PREFIX}/[model]/[id]"
 #
-    rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -C si -M utc -F log \
-        -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
+#    rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -C si -M utc -F log \
+#        -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
 done < <(jq -c '.dongles[]' $CONFIG)
