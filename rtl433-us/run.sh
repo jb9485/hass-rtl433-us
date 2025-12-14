@@ -13,8 +13,12 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 [ -n "$MQTT_USER" ] && MQTT_URL="$MQTT_URL,user=$MQTT_USER"
 [ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
 
-jq -c '.dongles[]' $CONFIG | while read -r d; do
+while IFS= read -r d; do
     DEVICE=$(echo "$d" | jq -r '.device // "0"')
+    if [[ "$DEVICE" =~ ^[0-9]+$ && "$DEVICE" != "0" ]]; then
+        DEVICE=":$DEVICE"
+    fi
+
     FREQ=$(echo "$d" | jq -r '.frequency // 433')
 
     case "$FREQ" in
@@ -27,4 +31,4 @@ jq -c '.dongles[]' $CONFIG | while read -r d; do
 
     rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -C si -M utc -F log \
         -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
-done
+done < <(jq -c '.dongles[]' $CONFIG)
