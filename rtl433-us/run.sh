@@ -4,6 +4,11 @@ set -e
 
 CONFIG=/data/options.json
 
+echo "Listing detected RTL-SDR devices:"
+rtl_433 -d :list
+rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -C si -M utc -F log \
+    -F "$$ MQTT_URL,retain=1,devices=rtl_433/ $${PREFIX}/[model]/[id]"
+
 MQTT_HOST=$(jq -r '.mqtt_host // "core-mosquitto"' $CONFIG)
 MQTT_PORT=$(jq -r '.mqtt_port // 1883' $CONFIG)
 MQTT_USER=$(jq -r '.mqtt_user // empty' $CONFIG)
