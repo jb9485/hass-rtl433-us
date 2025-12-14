@@ -1,8 +1,11 @@
 # RTL433 US Edition - Home Assistant Add-on
 
+## Fair Warning!
+- **I'm not a developer.  I don't know what I'm doing.  I have been left alone without adult supervision.  These are not my pants.**  This repo is subject to random breaking changes as I tinker and learn.  The documenation below may be right or blatently wrong at any given time. I don't suggest you use this repo unless you are OK with that.
+
 ## Overview
 
-This Home Assistant add-on integrates **RTL_433**, a widely-used tool for decoding and capturing signals from various wireless devices, with a focus on **US-specific frequency bands**. It is optimized for the **RTL-SDR Blog V4** hardware dongle and supports both **433 MHz** and **915 MHz** operations. This add-on enables seamless reception of signals from weather sensors, remote controls, doorbells, and other IoT devices commonly used in the US market.
+This Home Assistant add-on integrates **RTL_433**, a widely-used tool for decoding and capturing signals from various wireless devices, with a focus on **US-specific frequency bands**. It is optimized for the **RTL-SDR Blog V4** hardware dongle and supports both **433 MHz** and **915 MHz** operations. This add-on enables seamless reception (when it works) of signals from weather sensors, remote controls, doorbells, and other IoT devices commonly used in the US market.
 
 The add-on publishes decoded data directly to an **MQTT broker** in **key-value (kv) format**, making it easy to integrate with Home Assistant's MQTT integration for automated sensor entities and automations.
 
@@ -15,11 +18,11 @@ The add-on publishes decoded data directly to an **MQTT broker** in **key-value 
 - **Mosquitto Broker Compatibility**: Works out-of-the-box with Home Assistant's built-in MQTT broker.
 - **Frequency Hopping Example**: Supports configurations for scanning both 433 MHz and 915 MHz (e.g., using multiple dongles).
 
-This add-on is particularly useful for US users dealing with FCC-regulated frequencies, ensuring reliable performance without the need for custom hardware modifications.
+This add-on is particularly useful for US users dealing with FCC-regulated frequencies, ensuring reliable performance without the need for custom hardware modifications.  At least in theory.
 
 ## Requirements
 - **Home Assistant**: Version 2023.6 or later (with Supervisor for add-on management).
-- **Hardware**: RTL-SDR Blog V4 dongle (recommended; other RTL-SDR v3+ devices may work with reduced features).
+- **Hardware**: RTL-SDR Blog V4 dongle (recommended; other RTL-SDR v3+ devices may work with reduced features. Or they may run amok in your fridge and spoil all your milk.  I don't have one to test and be sure.).
 - **MQTT Integration**: Enabled in Home Assistant with a running broker (e.g., Mosquitto add-on).
 - **USB Access**: Ensure your Home Assistant host (e.g., HAOS on Raspberry Pi) has USB passthrough enabled for the RTL-SDR dongle.
 
@@ -120,7 +123,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - Home Assistant add-on framework.
 - Maintained by [jb9485](https://github.com/jb9485).
 
+
 ---
 
-*Last Updated: November 28, 2025*  
+*Last Updated: December 13, 2025*  
 For the latest changes, check the [repository commits](https://github.com/jb9485/hass-rtl433-us/commits/main). If you encounter issues, ensure your setup matches the current version.
