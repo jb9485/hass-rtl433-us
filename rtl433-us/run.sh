@@ -14,6 +14,7 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 [ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
 
 while IFS= read -r d; do
+    DEVICE_PATH=$(echo "$d" | jq -r '.device_path')
     FREQ=$(echo "$d" | jq -r '.frequency // 433')
 
     case "$FREQ" in
@@ -24,8 +25,8 @@ while IFS= read -r d; do
 
     PREFIX="${FREQ}mhz"
 
-    rtl_test -t
+    chmod 666 "$DEVICE_PATH" || true
 
-    rtl_433 -d 0 -f $TUNE -s $RATE -C si -M utc -F log \
+    rtl_433 -d "$DEVICE_PATH" -f $TUNE -s $RATE -C si -M utc -F log \
         -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
 done < <(jq -c '.dongles[]' $CONFIG)
