@@ -1,9 +1,19 @@
 ARG BUILD_FROM=ghcr.io/hassio-addons/base:stable
 FROM ${BUILD_FROM}
 
-RUN apk add --no-cache rtl-sdr mosquitto-clients jq
+RUN apk add --no-cache \
+    rtl-sdr librtlsdr-dev libusb-dev \
+    mosquitto-clients jq git cmake build-base openssl-dev
 
-RUN echo 'blacklist dvb_usb_rtl28xxu' > /etc/modprobe.d/blacklist-rtl.conf
+RUN echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2838", MODE="0666", GROUP="plugdev"' > /etc/udev/rules.d/99-rtl-sdr.rules
+
+RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433 && \
+    mkdir -p /tmp/rtl_433/build && \
+    cd /tmp/rtl_433/build && \
+    cmake .. -DENABLE_RTLSDR=ON && \
+    make -j$(nproc) && \
+    make install && \
+    rm -rf /tmp/rtl_433
 
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
