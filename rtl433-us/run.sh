@@ -13,26 +13,20 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 [ -n "$MQTT_USER" ] && MQTT_URL="$MQTT_URL,user=$MQTT_USER"
 [ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
 
-while IFS= read -r d; do
-    DEVICE_PATH=$(echo "$d" | jq -r '.device_path // ""')
+# Hard-code the device to index 0 (container sees one device at index 0)
+DEVICE="0"
 
-    if [ -z "$DEVICE_PATH" ]; then
-        echo "No device_path configured for this dongle entry - skipping"
-        continue
-    fi
+# Get the first frequency from config (or default to 433)
+FREQ=$(jq -r '.dongles[0].frequency // 433' $CONFIG)
 
-    FREQ=$(echo "$d" | jq -r '.frequency // 433')
+case "$FREQ" in
+    433) TUNE=433920000; RATE=250k ;;
+    915) TUNE=915000000; RATE=1M ;;
+    *) TUNE=433920000; RATE=250k ;;
+esac
 
-    case "$FREQ" in
-        433) TUNE=433920000; RATE=250k ;;
-        915) TUNE=915000000; RATE=1M ;;
-        *) echo "Skip invalid freq $FREQ"; continue ;;
-    esac
+PREFIX="${FREQ}mhz"
 
-    PREFIX="${FREQ}mhz"
-
-    chmod 666 "$DEVICE_PATH" 2>/dev/null || true
-
-    rtl_433 -d "$DEVICE_PATH" -f $TUNE -s $RATE -C si -M utc -F log \
-        -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
-done < <(jq -c '.dongles[]' $CONFIG)
+# Run rtl_433 in foreground with index 0
+rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -C si -M utc -F log \
+    -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
