@@ -1,6 +1,6 @@
 {
   "name": "RTL_433 US",
-  "version": "1.0.60",
+  "version": "1.0.61",
   "slug": "rtl433-us",
   "description": "Integrates rtl_433 with Home Assistant using RTL-SDR dongles (supports multiple with per-dongle frequencies).",
   "arch": ["aarch64", "armv7", "armhf", "amd64"],
@@ -19,6 +19,7 @@
     "mqtt_password": "",
     "dongles": [
       {
+        "device_path": "/dev/bus/usb/001/004",
         "frequency": 915
       }
     ]
@@ -30,6 +31,7 @@
     "mqtt_password": "password?",
     "dongles": [
       {
+        "device_path": "str",
         "frequency": "int(400,1000)?"
       }
     ]

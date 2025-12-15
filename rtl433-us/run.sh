@@ -15,12 +15,13 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 
 while IFS= read -r d; do
     DEVICE_PATH=$(echo "$d" | jq -r '.device_path // ""')
-    FREQ=$(echo "$d" | jq -r '.frequency // 433')
 
     if [ -z "$DEVICE_PATH" ]; then
-        echo "No device_path configured"
-        sleep infinity
+        echo "No device_path configured for this dongle entry - skipping"
+        continue
     fi
+
+    FREQ=$(echo "$d" | jq -r '.frequency // 433')
 
     case "$FREQ" in
         433) TUNE=433920000; RATE=250k ;;
