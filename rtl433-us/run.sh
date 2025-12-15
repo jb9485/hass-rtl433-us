@@ -13,13 +13,7 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 [ -n "$MQTT_USER" ] && MQTT_URL="$MQTT_URL,user=$MQTT_USER"
 [ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
 
-# List devices for debug
-rtl_test -t
-
-# Hard-code index 0
-DEVICE="0"
-
-FREQ=$(jq -r '.dongles[0].frequency // 433' $CONFIG)
+FREQ=$(jq -r '.frequency // 433' $CONFIG)
 
 case "$FREQ" in
     433) TUNE=433920000; RATE=250k ;;
@@ -29,5 +23,5 @@ esac
 
 PREFIX="${FREQ}mhz"
 
-rtl_433 -d "$DEVICE" -f $TUNE -s $RATE -C si -M utc -F log \
-    -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
+rtl_433 -d 0 -f $TUNE -s $RATE -C si -M utc -F log \
+    -F "$$ MQTT_URL,retain=1,devices=rtl_433/ $${PREFIX}/[model]/[id]"
