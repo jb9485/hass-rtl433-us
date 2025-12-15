@@ -14,8 +14,13 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 [ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
 
 while IFS= read -r d; do
-    DEVICE_PATH=$(echo "$d" | jq -r '.device_path')
+    DEVICE_PATH=$(echo "$d" | jq -r '.device_path // ""')
     FREQ=$(echo "$d" | jq -r '.frequency // 433')
+
+    if [ -z "$DEVICE_PATH" ]; then
+        echo "No device_path configured"
+        sleep infinity
+    fi
 
     case "$FREQ" in
         433) TUNE=433920000; RATE=250k ;;
@@ -25,7 +30,7 @@ while IFS= read -r d; do
 
     PREFIX="${FREQ}mhz"
 
-    chmod 666 "$DEVICE_PATH" || true
+    chmod 666 "$DEVICE_PATH" 2>/dev/null || true
 
     rtl_433 -d "$DEVICE_PATH" -f $TUNE -s $RATE -C si -M utc -F log \
         -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
