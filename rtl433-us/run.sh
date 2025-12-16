@@ -23,6 +23,7 @@ esac
 
 PREFIX="${FREQ}mhz"
 
+# Hard-coded path for direct plug
 DEVICE_PATH="/dev/bus/usb/001/003"
 
 rtl_433 -d "$DEVICE_PATH" -f $TUNE -s $RATE -C si -M utc -F log \
