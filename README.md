@@ -5,13 +5,13 @@
 
 ## Overview
 
-This Home Assistant add-on integrates **RTL_433**, a widely-used tool for decoding and capturing signals from various wireless devices, with a focus on **US-specific frequency bands**. It is optimized for the **RTL-SDR Blog V4** hardware dongle and supports both **433 MHz** and **915 MHz** operations. This add-on enables seamless reception (when it works) of signals from weather sensors, remote controls, doorbells, and other IoT devices commonly used in the US market.
+This Home Assistant add-on integrates **RTL_433**, a widely-used tool for decoding and capturing signals from various wireless devices, with a focus on **US-specific frequency bands**. It is optimized for the **RTL-SDR Blog V4** hardware dongle and supports both **433 MHz** and **915 MHz** operations. Eventually. This add-on enables seamless reception (when it works) of signals from weather sensors, remote controls, doorbells, and other IoT devices commonly used in the US market.
 
-The add-on publishes decoded data directly to an **MQTT broker** in **key-value (kv) format**, making it easy to integrate with Home Assistant's MQTT integration for automated sensor entities and automations.
+The add-on publishes decoded data directly to an **MQTT broker** in **key-value (kv) format**, making it easy to integrate with Home Assistant's MQTT integration for automated sensor entities and automations. Most of the time.
 
 ### Key Features
 - **Full RTL-SDR Blog V4 Support**: Includes PPM (parts per million) correction for accurate tuning and high sample rates for better signal capture.
-- **Native 915 MHz Reception**: Bypasses the common 250 kHz lockout issue on standard RTL-SDR devices.
+- **Native 915 MHz Reception**: Bypasses the common 250 kHz lockout issue on standard RTL-SDR devices. Eventually.
 - **User-Selectable Frequencies**: Choose between 433 MHz or 915 MHz, or configure for both.
 - **Multi-Dongle Support**: Use multiple RTL-SDR dongles (one per frequency band) for simultaneous monitoring.
 - **Direct MQTT Publishing**: Outputs data to the `rtl_433/#` topic in a structured key-value format compatible with Home Assistant.
