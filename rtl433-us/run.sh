@@ -21,4 +21,4 @@ esac
 
 PREFIX="${FREQ}mhz"
 
-rtl_433 -d 0 -f $TUNE -s $RATE -q -F log -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
+rtl_433 -d 0 -f $TUNE -s $RATE -vv -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
