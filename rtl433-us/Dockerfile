@@ -16,11 +16,11 @@ blacklist dvb_core' > /etc/modprobe.d/blacklist-rtl.conf
 RUN git clone https://github.com/rtlsdrblog/rtl-sdr-blog.git /tmp/librtlsdr && \
     cd /tmp/librtlsdr && mkdir build && cd build && \
     cmake .. -DDETACH_KERNEL_DRIVER=ON -DINSTALL_UDEV_RULES=OFF && make -j$(nproc) && make install && \
-    rm -rf /tmp/librtlsdr && \
+    cd /tmp && rm -rf /tmp/librtlsdr && \
     git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433 && \
     cd /tmp/rtl_433 && mkdir build && cd build && \
     cmake .. && make -j$(nproc) && make install && \
-    rm -rf /tmp/rtl_433
+    cd /tmp && rm -rf /tmp/rtl_433
 
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
