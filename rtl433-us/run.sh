@@ -21,7 +21,4 @@ esac
 
 PREFIX="${FREQ}mhz"
 
-# Detach kernel driver if attached. 
-rtl_sdr -d 0 >/dev/null 2>&1 && sleep 1 || true
-
 rtl_433 -d 0 -f $TUNE -s $RATE -vv -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
