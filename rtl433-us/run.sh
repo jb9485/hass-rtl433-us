@@ -21,4 +21,4 @@ esac
 
 PREFIX="${FREQ}mhz"
 
-LIBUSB_DEBUG=4 RTLSDR_DEBUG=3 rtl_433 -d 0 -f $TUNE -s $RATE -vvv -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
+rtl_433 -d 0 -f $TUNE -s $RATE -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
