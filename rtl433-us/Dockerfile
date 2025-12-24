@@ -13,6 +13,11 @@ blacklist rtl2838\n\
 blacklist r820t\n\
 blacklist dvb_core' > /etc/modprobe.d/blacklist-rtl.conf
 
+RUN git clone https://github.com/merbanan/rtl_433.git /tmp/rtl_433 && \
+    cd /tmp/rtl_433 && mkdir build && cd build && \
+    cmake .. -DDETACH_KERNEL_DRIVER=ON && make -j$(nproc) && make install && \
+    rm -rf /tmp/rtl_433
+
 COPY run.sh /run.sh
 RUN chmod a+x /run.sh
 
