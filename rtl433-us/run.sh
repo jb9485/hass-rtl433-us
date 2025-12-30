@@ -12,6 +12,7 @@ MQTT_URL="mqtt://$MQTT_HOST:$MQTT_PORT"
 [ -n "$MQTT_PASS" ] && MQTT_URL="$MQTT_URL,pass=$MQTT_PASS"
 
 FREQ=$(jq -r '.frequency // 433' $CONFIG)
+DEV=$(jq -r '.device // "0"' $CONFIG)
 
 case "$FREQ" in
   433) TUNE=433920000; RATE=250k ;;
@@ -21,4 +22,21 @@ esac
 
 PREFIX="${FREQ}mhz"
 
-rtl_433 -d 0 -f $TUNE -s $RATE -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]"
+rtl_433 -d "$DEV" -f $TUNE -s $RATE -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]" &
+
+SECOND_FREQ=$(jq -r '.second_frequency // empty' $CONFIG)
+SECOND_DEV=$(jq -r '.second_device // empty' $CONFIG)
+
+if [ -n "$SECOND_FREQ" ] && [ -n "$SECOND_DEV" ]; then
+  case "$SECOND_FREQ" in
+    433) TUNE=433920000; RATE=250k ;;
+    915) TUNE=915000000; RATE=1M ;;
+    *) echo "Invalid second frequency option: $SECOND_FREQ (must be 433 or 915)"; exit 1 ;;
+  esac
+
+  PREFIX="${SECOND_FREQ}mhz"
+
+  rtl_433 -d "$SECOND_DEV" -f $TUNE -s $RATE -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/[model]/[id]" &
+fi
+
+wait
