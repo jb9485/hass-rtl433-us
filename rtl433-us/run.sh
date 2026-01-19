@@ -22,7 +22,11 @@ esac
 
 PREFIX="${FREQ}mhz"
 
-rtl_433 -d "$DEV" -f $TUNE -s $RATE -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/devices[/model][/channel][/id]" &
+# Updated: Add events= in addition to devices= for full JSON per device
+# Topic expands like rtl_433/${PREFIX}/events[/model][/id]
+# retain=1 kept for persistence
+rtl_433 -d "$DEV" -f $TUNE -s $RATE -C si -M utc \
+  -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/devices[/model][/channel][/id],events=rtl_433/${PREFIX}/events[/model][/id]" &
 
 SECOND_FREQ=$(jq -r '.second_frequency // empty' $CONFIG)
 SECOND_DEV=$(jq -r '.second_device // empty' $CONFIG)
@@ -36,7 +40,8 @@ if [ -n "$SECOND_FREQ" ] && [ -n "$SECOND_DEV" ]; then
 
   PREFIX="${SECOND_FREQ}mhz"
 
-  rtl_433 -d "$SECOND_DEV" -f $TUNE -s $RATE -C si -M utc -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/devices[/model][/channel][/id]" &
+  rtl_433 -d "$SECOND_DEV" -f $TUNE -s $RATE -C si -M utc \
+    -F "$MQTT_URL,retain=1,devices=rtl_433/${PREFIX}/devices[/model][/channel][/id],events=rtl_433/${PREFIX}/events[/model][/id]" &
 fi
 
 wait
