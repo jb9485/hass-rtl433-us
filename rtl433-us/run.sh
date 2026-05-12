@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 #
-# Improved run.sh - FIXED MQTT syntax for latest rtl_433
+# Improved run.sh - MQTT FIXED for rtl_433 25.12+
 #
 
 set -euo pipefail
@@ -45,13 +45,16 @@ start_rtl433_instance() {
             ;;
     esac
 
-    # NEW MQTT syntax - use separate -F flags (more reliable with latest rtl_433)
-    local mqtt_base="mqtt://${MQTT_HOST}:${MQTT_PORT}"
-    [ -n "$MQTT_USER" ] && mqtt_base="${mqtt_base},user=${MQTT_USER}"
-    [ -n "$MQTT_PASS" ] && mqtt_base="${mqtt_base},pass=${MQTT_PASS}"
+    # SINGLE MQTT argument with custom devices + events topics (works with 25.12+)
+    local mqtt_url="mqtt://${MQTT_HOST}:${MQTT_PORT}"
+    [ -n "$MQTT_USER" ] && mqtt_url="${mqtt_url},user=${MQTT_USER}"
+    [ -n "$MQTT_PASS" ] && mqtt_url="${mqtt_url},pass=${MQTT_PASS}"
+    mqtt_url="${mqtt_url},retain=1"
 
     local devices_topic="rtl_433/${prefix}/devices[/model][/channel][/id]"
     local events_topic="rtl_433/${prefix}/events[/model][/id]"
+
+    mqtt_url="${mqtt_url},devices=${devices_topic},events=${events_topic}"
 
     log "=== Starting watchdog for $prefix (device=$device, ${frequency} MHz) ==="
 
@@ -62,11 +65,8 @@ start_rtl433_instance() {
     while true; do
         log "Launching rtl_433 for $prefix..."
 
-        # Use multiple -F flags instead of one giant string
         if rtl_433 -d "$device" -f "$tune" -s "$rate" -C si -M utc \
-            -F "$mqtt_base,retain=1" \
-            -F "devices=$devices_topic" \
-            -F "events=$events_topic"; then
+            -F "$mqtt_url"; then
             log "rtl_433 for $prefix exited cleanly"
             exit_code=0
         else
