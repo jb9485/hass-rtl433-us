@@ -45,16 +45,11 @@ start_rtl433_instance() {
             ;;
     esac
 
-    # SINGLE MQTT argument with custom devices + events topics (works with 25.12+)
+    # Working MQTT syntax for the rtl_433 version currently being built
     local mqtt_url="mqtt://${MQTT_HOST}:${MQTT_PORT}"
     [ -n "$MQTT_USER" ] && mqtt_url="${mqtt_url},user=${MQTT_USER}"
     [ -n "$MQTT_PASS" ] && mqtt_url="${mqtt_url},pass=${MQTT_PASS}"
-    mqtt_url="${mqtt_url},retain=1"
-
-    local devices_topic="rtl_433/${prefix}/devices[/model][/channel][/id]"
-    local events_topic="rtl_433/${prefix}/events[/model][/id]"
-
-    mqtt_url="${mqtt_url},devices=${devices_topic},events=${events_topic}"
+    mqtt_url="${mqtt_url},retain=1,devices=rtl_433/${prefix}/devices[/model][/channel][/id],events=rtl_433/${prefix}/events[/model][/id]"
 
     log "=== Starting watchdog for $prefix (device=$device, ${frequency} MHz) ==="
 
