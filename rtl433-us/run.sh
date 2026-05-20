@@ -20,10 +20,22 @@ log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S %Z')] $*"
 }
 
-# --- Force unload kernel drivers first ---
-log "Forcing unload of kernel RTL-SDR modules..."
-modprobe -r rtl2832_sdr rtl2832 dvb_usb_rtl28xxu dvb_usb_v2 2>/dev/null || true
+# --- Aggressive unload of kernel drivers ---
+log "Forcing unload of kernel RTL-SDR modules (aggressive)..."
+for mod in rtl2832_sdr rtl2832 dvb_usb_rtl28xxu dvb_usb_v2 videobuf2_vmalloc videobuf2_v4l2; do
+    modprobe -r "$mod" 2>/dev/null || true
+    rmmod "$mod" 2>/dev/null || true
+done
+sleep 3
+
+# Retry once more
+for mod in rtl2832_sdr rtl2832 dvb_usb_rtl28xxu dvb_usb_v2; do
+    rmmod "$mod" 2>/dev/null || true
+done
 sleep 2
+
+log "Kernel modules unloaded. Checking lsmod..."
+lsmod | grep -E "rtl|dvb" || log "No RTL/DVB modules detected — good."
 
 # --- Watchdog function (unchanged from working MQTT version) ---
 start_rtl433_instance() {
