@@ -95,12 +95,13 @@ cleanup() {
     exit 0
 }
 
-trap cleanup SIGTERM SIGINT SIGQUIT EXIT
-
-# Launch instances
+# --- Launch instances with staggered start to avoid USB race ---
+log "=== Starting primary (915mhz) first ==="
 start_rtl433_instance "$DEV" "$FREQ" "${FREQ}mhz" &
 
 if [ -n "$SECOND_FREQ" ] && [ -n "$SECOND_DEV" ]; then
+    log "Waiting 4 seconds before starting secondary (433mhz) to prevent USB claim collision..."
+    sleep 4
     start_rtl433_instance "$SECOND_DEV" "$SECOND_FREQ" "${SECOND_FREQ}mhz" &
 fi
 
