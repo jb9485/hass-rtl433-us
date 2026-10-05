@@ -43,6 +43,7 @@ For stable dongle assignment (especially if USB enumeration changes on reboot):
 - Plug in one dongle, run `rtl_eeprom -d 0 -s 00000915` for 915 MHz dongle (adjust index if needed).
 - Unplug/replug, repeat for 433 MHz dongle: `rtl_eeprom -d 0 -s 00000433`.
 - In add-on config, use serials instead of indices (e.g., device="00000915").
+  ## - Strongly recommend using Plugable USBC-HUB7BC power USB 7 port hub.  I spent many hours chasing stability issues that were caused by cruddy hub power or connectivity.  This hub has been 100% stable.
 
 ## Troubleshooting
 
